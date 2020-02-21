@@ -38,6 +38,12 @@ module Enumerable
     end
 
     def my_none?
+        arr = []
+        self.my_each do |i|
+            condition = yield(i)
+            condition ? arr<<true : arr<<false
+        end
+        puts arr.include?(true) ? false : true
     end
 
     def my_count
@@ -70,3 +76,4 @@ end
 # [1,2,3,4,5].my_select {|n| n.even?}
 # [1,2,3,4,5].my_all? {|n| n<10}
 # [1,2,3,4,5].my_any? {|n| n<0}
+# [1,2,3,4,5].my_none? {|n| n<2}
