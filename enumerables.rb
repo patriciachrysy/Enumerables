@@ -47,6 +47,12 @@ module Enumerable
     end
 
     def my_count
+        counter = 0
+        self.each do |i|
+            condition = yield(i)
+            counter += 1 if condition
+        end
+        puts counter
     end
 
     def my_map
@@ -77,3 +83,4 @@ end
 # [1,2,3,4,5].my_all? {|n| n<10}
 # [1,2,3,4,5].my_any? {|n| n<0}
 # [1,2,3,4,5].my_none? {|n| n<2}
+[1,2,3,4,5].my_count {|n| n<3}
