@@ -56,6 +56,12 @@ module Enumerable
     end
 
     def my_map
+        arr = []
+        self.each do |i|
+            condition = yield(i)
+            arr << condition
+        end
+        p arr
     end
 
     def my_inject
@@ -63,12 +69,13 @@ module Enumerable
 
     def multiply_els
     end
-
+=begin
     def my_map #proc only
     end
 
     def my_map #proc or block
     end
+=end
 
 
 end
@@ -83,4 +90,5 @@ end
 # [1,2,3,4,5].my_all? {|n| n<10}
 # [1,2,3,4,5].my_any? {|n| n<0}
 # [1,2,3,4,5].my_none? {|n| n<2}
-[1,2,3,4,5].my_count {|n| n<3}
+# [1,2,3,4,5].my_count {|n| n<3}
+[1,2,3,4,5].my_map {|n| n**2}
