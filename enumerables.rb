@@ -74,19 +74,28 @@ module Enumerable
         ans
     end
 
-    def multiply_els
+    #my_map (proc only)
+    def my_map_proc(&my_proc)
+        arr = []
+        self.each do |i|
+            condition = my_proc.call(i)
+            arr << condition
+        end
+        arr
     end
 =begin
-    def my_map #proc only
-    end
-
     def my_map #proc or block
     end
 =end
-
-
 end
 
+#Test my_inject with multiply_els method
+def multiply_els(array)
+    array.my_inject(1) {|a,b| a*b}
+end
+# p multiply_els([1,2,3,4,5])
+
+#prepend the module to Array to test.
 class Array
     prepend Enumerable
 end
@@ -100,3 +109,4 @@ end
 # [1,2,3,4,5].my_count {|n| n<3}
 # [1,2,3,4,5].my_map {|n| n**2}
 # p [1,2,3,4,5].my_inject(1) {|a,b| a*b }
+# p [1,2,3,4,5].my_map_proc(&:to_s)
