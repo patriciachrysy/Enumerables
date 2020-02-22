@@ -118,6 +118,10 @@ def multiply_els(array)
 end
 # p multiply_els([1,2,3,4,5])
 
+=begin
+
+#TESTING -------------------------------
+
 #prepend the module to Array to test.
 class Array
     prepend Enumerable
@@ -132,5 +136,6 @@ end
 # [1,2,3,4,5].my_count {|n| n<3}
 # [1,2,3,4,5].my_map {|n| n**2}
 # p [1,2,3,4,5].my_inject(1) {|a,b| a*b }
-p [1,2,3,4,5].my_map(&:to_s)
-p [1,2,3,4,5].my_map {|n| n.to_s}
+# p [1,2,3,4,5].my_map(&:to_s)
+# p [1,2,3,4,5].my_map {|n| n.to_s}
+=end
