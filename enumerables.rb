@@ -11,12 +11,13 @@ module Enumerable
         end
     end
 
-    def my_select #interesting...
+    def my_select 
+        arr=[]
         for i in 0..self.length-1
-            arr=[]
             criteria = yield(self[i])
             arr << self[i] if criteria
         end
+        arr
     end
 
     def my_all?
@@ -25,7 +26,7 @@ module Enumerable
             condition = yield(i)
             condition ? arr<<true : arr<<false
         end
-        puts arr.include?(false) ? false : true
+        arr.include?(false) ? false : true
     end
 
     def my_any?
@@ -34,7 +35,7 @@ module Enumerable
             condition = yield(i)
             condition ? arr<<true : arr<<false
         end
-        puts arr.include?(true)
+        arr.include?(true)
     end
 
     def my_none?
@@ -43,7 +44,7 @@ module Enumerable
             condition = yield(i)
             condition ? arr<<true : arr<<false
         end
-        puts arr.include?(true) ? false : true
+        arr.include?(true) ? false : true
     end
 
     def my_count
@@ -52,7 +53,7 @@ module Enumerable
             condition = yield(i)
             counter += 1 if condition
         end
-        puts counter
+        counter
     end
 
     def my_map
@@ -61,10 +62,16 @@ module Enumerable
             condition = yield(i)
             arr << condition
         end
-        p arr
+        arr
     end
 
-    def my_inject
+    def my_inject(param)
+        ans = nil
+        self.each do |i|
+            ans = yield(param, i )
+            param = ans
+        end
+        ans
     end
 
     def multiply_els
@@ -86,9 +93,10 @@ end
 
 # [1,2,3,4,5].my_each{|n| print n}
 # [1,2,3,4,5].my_each_with_index{|a,b| puts"#{a} with index #{b}"}
-# [1,2,3,4,5].my_select {|n| n.even?}
-# [1,2,3,4,5].my_all? {|n| n<10}
-# [1,2,3,4,5].my_any? {|n| n<0}
+# p [1,2,3,4,5].my_select {|n| n.even?}
+# p [1,2,3,4,5].my_all? {|n| n<10}
+# p [1,2,3,4,5].my_any? {|n| n<0}
 # [1,2,3,4,5].my_none? {|n| n<2}
 # [1,2,3,4,5].my_count {|n| n<3}
-[1,2,3,4,5].my_map {|n| n**2}
+# [1,2,3,4,5].my_map {|n| n**2}
+# p [1,2,3,4,5].my_inject(1) {|a,b| a*b }
