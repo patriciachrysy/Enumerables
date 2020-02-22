@@ -1,43 +1,13 @@
-# Project Name
+# Enumerables
 
-> One paragraph statement about the project.
+> Ruby Enumerable methods are rebuilt to solidify my understanding of Ruby Array, methods, Procs, Blocks, yield, etc. This project is created from scratched and solely by [@Kyle-Law](https://github.com/Kyle-Law). The project is built according to [this project on the odin project](https://www.theodinproject.com/courses/ruby-programming/lessons/advanced-building-blocks), assignment 2.
 
-![screenshot](./app_screenshot.png)
-
-Additional description about the project and its features.
+This project is also the second project of Microverse Software Development Program - Ruby Section. Branches that merged into the master branch are verified and approved by Microverse's Technical Support Engineers.
 
 ## Built With
 
-- Major languages,
-- frameworks,
-- technologies used
-
-## Live Demo
-
-[Live Demo Link](https://livedemo.com)
-
-
-## Getting Started
-
-**This is an example of how you may give instructions on setting up your project locally.**
-**Modify this file to match your project, remove sections that don't apply. For example: delete the testing section if the currect project doesn't require testing.**
-
-
-To get a local copy up and running follow these simple example steps.
-
-### Prerequisites
-
-### Setup
-
-### Install
-
-### Usage
-
-### Run tests
-
-### Deployment
-
-
+- Ruby
+- VS Code
 
 ## Authors
 
@@ -47,17 +17,11 @@ To get a local copy up and running follow these simple example steps.
 - Twitter: [@Kyle-Law](https://twitter.com/ZhunKhing)
 - Linkedin: [Kyle law](https://www.linkedin.com/in/kyle-lawzhunkhing/)
 
-👤 **Author2**
-
-- Github: [@githubhandle](https://github.com/githubhandle)
-- Twitter: [@twitterhandle](https://twitter.com/twitterhandle)
-- Linkedin: [linkedin](https://linkedin.com/linkedinhandle)
-
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome!
 
-Feel free to check the [issues page](issues/).
+Feel free to check the [issues page](https://github.com/Kyle-Law/Enumerables/issues).
 
 ## Show your support
 
@@ -65,9 +29,8 @@ Give a ⭐️ if you like this project!
 
 ## Acknowledgments
 
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc
+- Microverse
+- The Odin Project
 
 ## 📝 License
 
