@@ -1,53 +1,90 @@
 module Enumerable
   # 1. Create my_each
   def my_each
-    (0..length - 1).each do |i|
-      yield self[i]
+    i = 0
+    while i < length
+      yield self[i] if block_given?
+      i += 1
     end
+    self unless block_given?
   end
 
   # 2. Create my_each_with_index
   def my_each_with_index
-    (0..length - 1).each do |i|
-      yield(self[i], i)
+    i = 0
+    while i < length
+      yield(self[i], i) if block_given?
+      i += 1
     end
+    self unless block_given?
   end
 
   # 3. Create my_select
   def my_select
     arr = []
     (0..length - 1).each do |i|
-      criteria = yield(self[i])
+      criteria = yield(self[i]) if block_given?
       arr << self[i] if criteria
     end
-    arr
+    block_given? ? arr : self
   end
 
   # 4. Create my_all?
-  def my_all?
-    arr = []
+  # helper method to check regex
+  def check_my_all_regex(param)
+    reg_array = []
+    my_each { |i| reg_array << i.match?(param) }
+    reg_array.include?(false) ? false : true
+  end
+
+  # helper method to check class
+  def check_my_all_class(param)
+    class_array = []
+    my_each { |i| class_array.append(i.class == param) }
+    class_array.include?(false) ? false : true
+  end
+
+  def my_all?(param = nil)
+    arr_array = []
+    # return check_my_all_regex(param) if param.class == Regexp
+
+    return check_my_all_regex(param) if param.class == Regexp
+
+    # return check_my_all_class(param) unless param.nil?
+    return check_my_all_class(param) unless param.nil?
+
+    # check yield and append it into an array
     my_each do |i|
-      condition = yield(i)
-      arr << (condition ? true : false)
+      condition = yield(i) if block_given?
+      arr_array << (condition ? true : false)
     end
-    arr.include?(false) ? false : true
+    # return
+    if block_given?
+      arr_array.include?(false) ? false : true
+    else
+      false
+    end
   end
 
   # 5. Create my_any?
   def my_any?
     arr = []
     my_each do |i|
-      condition = yield(i)
+      condition = yield(i) if block_given?
       arr << (condition ? true : false)
     end
-    arr.include?(true)
+    if block_given?
+      arr.include?(true)
+    else
+      true
+    end
   end
 
   # 6. Create my_none?
   def my_none?
     arr = []
     my_each do |i|
-      condition = yield(i)
+      condition = yield(i) if block_given?
       arr << (condition ? true : false)
     end
     arr.include?(true) ? false : true
@@ -101,14 +138,13 @@ module Enumerable
         condition = my_proc.call(i)
         arr << condition
       end
-    end
-    unless my_proc # use block if proc is not given
+    else
       each do |i|
-        condition = yield(i)
+        condition = yield(i) if block_given?
         arr << condition
       end
+      block_given? ? arr : self
     end
-    arr
   end
 end
 
@@ -122,13 +158,13 @@ end
 # TESTING -------------------------------
 #
 # prepend the module to Array to test.
-# class Array
-#     prepend Enumerable
-# end
+class Array
+  prepend Enumerable
+end
 #
-# [1,2,3,4,5].my_each{|n| print n}
+# p [1,2,3,4,5].my_each
 # [1,2,3,4,5].my_each_with_index{|a,b| puts"#{a} with index #{b}"}
-# p [1,2,3,4,5].my_select {|n| n.even?}
+# p [1,2,3,4,5].my_select
 # p [1,2,3,4,5].my_all? {|n| n<10}
 # p [1,2,3,4,5].my_any? {|n| n<0}
 # [1,2,3,4,5].my_none? {|n| n<2}
@@ -137,3 +173,12 @@ end
 # p [1,2,3,4,5].my_inject(1) {|a,b| a*b }
 # p [1,2,3,4,5].my_map(&:to_s)
 # p [1,2,3,4,5].my_map {|n| n.to_s}
+# p [1,2,3,4,5].my_map
+# p [1, 2, 3, 4, 5].my_all?(Integer)
+# p [1, 2, 3, 4, 5].my_all?(Integer)
+p %w[asdf asdf afgag asdfq asgas].my_all?(/a/)
+# p [].class === Integer
+# p 'asdf'.match?('b')
+# p /123/.class
+
+# p /a/.class == Regexp
