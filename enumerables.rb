@@ -34,18 +34,17 @@ module Enumerable
   # Disable rubocop to avoid high-complexity alerts on helper method
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all_any_none_helper(sub_param, value)
-    if sub_param.nil? && !block_given? # when main_param & block is not given.
-      return true if value # true if element is true
-    elsif sub_param.class == Regexp # when a Regex is passed as an argument
-      return true if sub_param.match(value)
-    elsif sub_param.is_a?(Class) # when a class is passed as an argument
-      return value.class == sub_param
-    elsif sub_param == value # Check patterns other than Class/Regexp
-      return true
-    end
-    return true if yield(value) # value == each element here
+    # when main_param & block is not given.
+    return value ? true : false if sub_param.nil? && !block_given? # true if element is true
+    # when a Regex is passed as an argument
+    return sub_param.match?(value) if sub_param.class == Regexp
+    # when a class is passed as an argument
+    return value.class == sub_param if sub_param.is_a?(Class)
+    # when sub_param is given
+    return sub_param == value unless sub_param.nil?
 
-    false
+    yield(value) ? true : false
+    # Check patterns other than Class/Regexp
   end
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
@@ -159,7 +158,8 @@ end
 # p [1,2,3,4,5].my_each
 # [1,2,3,4,5].my_each_with_index{|a,b| puts"#{a} with index #{b}"}
 # p [1,2,3,4,5].my_select
-# p [1, 2, 3, 4, 5].my_all? { |n| n < 10 }
+# p [1, 2, 3, 4, 5].my_all? { |n| n < 6 }
+# p [1, 1, 1, 1, 1].my_all?(1)
 # p [1, 2, 3, 4, 5].my_any? { |n| n < 1 }
 # p [1,2,3,4,5].any?
 # p [1,2,3,4,5].my_none? {|n| n<2}
@@ -169,8 +169,8 @@ end
 # p [1, 2, 3, 4, 5].my_map(&:to_s)
 # p [1, 2, 3, 4, 5].my_map { |n| n.to_s }
 # p [1,2,3,4,5].my_map
-p [1, 2, 3, 4, '5'].my_all?(Integer)
-# p %w[asdf asdf afgag asdfq asgasg].none? {|i| i.length == 6}
+# p [1, 2, 3, 4, '5'].my_any?(Integer)
+# p %w[asdf asdf afgag asdfq asgasg].my_all?("a")
 # p [1,2,1,1,2].my_count {|x| x<2}
 # p (5..10).inject { |sum, n|
 #   sum + n
