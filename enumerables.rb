@@ -33,7 +33,7 @@ module Enumerable
   # Refactored my_all? & my_any? Helper method, to check Regex/Class/parameter passed in. (Enlightened by Mentor Rory Hellier)
   # Disable rubocop to avoid high-complexity alerts on helper methods
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
-  def my_all_any_helper(sub_param, value)
+  def my_all_any_none_helper(sub_param, value)
     if sub_param.nil? # when main_param is not given.
       return true if value # eg. [].my_all? == true (true when enumerator doesn't contain false/nil)
     elsif sub_param.class == Regexp # when a Regex is passed as an argument
@@ -49,12 +49,12 @@ module Enumerable
   end
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
-  # # Refactoring my_all?, enlightened by mentor Rory Heiller
+  # Refactoring my_all?, enlightened by mentor Rory Heiller
 
   def my_all?(main_param = nil)
     result = true
     my_each do |element| # iterate over self
-      condition = my_all_any_helper(main_param, element) { |i| block_given? ? yield(i) : i } 
+      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i } 
       result &&= condition # i equals each element here
       break if result == false # once find a false, exit the loop
     end
@@ -65,21 +65,22 @@ module Enumerable
   def my_any?(main_param = nil)
     result = false
     my_each do |element| # iterate over self
-      condition = my_all_any_helper(main_param, element) { |i| block_given? ? yield(i) : i } 
-      result ||= condition # i equals each element here
+      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i } # i equals each element here
+      result ||= condition 
       break if result == true #once got a true, exit the loop
     end
     result
   end
 
   # 6. Create my_none?
-  def my_none?
-    arr = []
-    my_each do |i|
-      condition = yield(i) if block_given?
-      arr << (condition ? true : false)
+  def my_none?(main_param = nil)
+    result = false
+    my_each do |element| # iterate over self
+      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i } # i equals each element here
+      result ||= condition 
+      break if result == true #once got a true, exit the loop
     end
-    arr.include?(true) ? false : true
+    !result
   end
 
   # 7. Create my_count
@@ -168,7 +169,7 @@ end
 # p [1,2,3,4,5].my_map
 # p [1, 2, 3, 4, 5].my_all?(Integer)
 # p [1, 2, 3, 4, 5].my_all?(Integer)
-p %w[asdf asdf afgag asdfq asgasg].any? {|i| i.length == 6}
+p %w[asdf asdf afgag asdfq asgasg].none? {|i| i.length == 7}
 # p [].class === Integer
 # p 'asdf'.match?('b')
 # p /123/.class
