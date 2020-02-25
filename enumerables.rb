@@ -30,7 +30,7 @@ module Enumerable
   end
 
   # 4. Create my_all?
-  # Refactored my_all? & my_any? Helper method, to check Regex/Class/parameter passed in. (Enlightened by Mentor Rory Hellier)
+  # Refactored my_all? & my_any? Helper method, to check Regex/Class/parameter passed in.
   # Disable rubocop to avoid high-complexity alerts on helper methods
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all_any_none_helper(sub_param, value)
@@ -54,7 +54,7 @@ module Enumerable
   def my_all?(main_param = nil)
     result = true
     my_each do |element| # iterate over self
-      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i } 
+      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i }
       result &&= condition # i equals each element here
       break if result == false # once find a false, exit the loop
     end
@@ -65,9 +65,9 @@ module Enumerable
   def my_any?(main_param = nil)
     result = false
     my_each do |element| # iterate over self
-      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i } # i equals each element here
-      result ||= condition 
-      break if result == true #once got a true, exit the loop
+      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i }
+      result ||= condition
+      break if result == true # once got a true, exit the loop
     end
     result
   end
@@ -76,23 +76,21 @@ module Enumerable
   def my_none?(main_param = nil)
     result = false
     my_each do |element| # iterate over self
-      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i } # i equals each element here
-      result ||= condition 
-      break if result == true #once got a true, exit the loop
+      condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i }
+      result ||= condition
+      break if result == true # once got a true, exit the loop
     end
     !result
   end
 
   # 7. Create my_count
-  def my_count(param=nil)
+  def my_count(param = nil)
     counter = 0
-    if param == nil && !block_given?
-      return self.length
-    else
-      self.my_each do |i|
-        condition = yield(i) if block_given?
-        counter += 1 if condition || param == i
-      end
+    return length if param.nil? && !block_given?
+
+    my_each do |i|
+      condition = yield(i) if block_given?
+      counter += 1 if condition || param == i
     end
     counter
   end
@@ -108,13 +106,23 @@ module Enumerable
   #   end
 
   # 9. Create my_inject
-  def my_inject(param)
-    ans = nil
-    each do |i|
-      ans = yield(param, i)
-      param = ans
+  def my_inject(initial = nil, sym = nil)
+    if block_given?
+      if !initial.nil? # if initial is given
+        result = initial
+        my_each { |element| result = yield(result, element) }
+      else # if block and param are not given
+        result = self[0] # Result = first element
+        self[1..-1].my_each { |element| result = yield(result, element) }
+      end
+    elsif !sym.nil? # if Symbol is given as 2nd parameter
+      result = initial
+      my_each { |element| result = result.send(sym, element) } # .send involve method by Symbol
+    elsif !initial.nil? # if initial is given only as a symbol
+      result = self[0]
+      self[1..-1].my_each { |element| result = result.send(initial, element) }
     end
-    ans
+    result
   end
 
   # 11. my_map (proc only)
@@ -129,25 +137,17 @@ module Enumerable
 
   # 12. my_map with proc/block
   def my_map(&my_proc)
+    return self unless my_proc || block_given?
+
     arr = []
-    if my_proc
-      each do |i|
-        condition = my_proc.call(i)
-        arr << condition
-      end
-    else
-      each do |i|
-        condition = yield(i) if block_given?
-        arr << condition
-      end
-      block_given? ? arr : self
-    end
+    my_proc ? each { |i| arr << my_proc.call(i) } : each { |i| arr << yield(i) if block_given? }
+    arr
   end
 end
 
 # 10. Test my_inject with multiply_els method
 def multiply_els(array)
-  array.my_inject(1) { |a, b| a * b }
+  array.my_inject(:*)
 end
 # p multiply_els([1,2,3,4,5])
 
@@ -165,18 +165,27 @@ end
 # p [1,2,3,4,5].my_all? {|n| n<10}
 # p [1,2,3,4,5].my_any? {|n| n<0}
 # [1,2,3,4,5].my_none? {|n| n<2}
-# [1,2,3,4,5].my_count {|n| n<3}
-# [1,2,3,4,5].my_map {|n| n**2}
-# p [1,2,3,4,5].my_inject(1) {|a,b| a*b }
-# p [1,2,3,4,5].my_map(&:to_s)
-# p [1,2,3,4,5].my_map {|n| n.to_s}
+# p [1, 2, 3, 4, 5].my_count { |n| n < 3 }
+# p [1, 2, 3, 4, 5].my_map { |n| n**2 }
+# p [1, 2, 3, 4, 5].my_inject(1) { |a, b| a * b }
+# p [1, 2, 3, 4, 5].my_map(&:to_s)
+# p [1, 2, 3, 4, 5].my_map { |n| n.to_s }
 # p [1,2,3,4,5].my_map
 # p [1, 2, 3, 4, 5].my_all?(Integer)
-# p [1, 2, 3, 4, 5].my_all?(Integer)
-# p %w[asdf asdf afgag asdfq asgasg].none? {|i| i.length == 7}
-# p [].class === Integer
-# p 'asdf'.match?('b')
-# p /123/.class
+# p %w[asdf asdf afgag asdfq asgasg].none? {|i| i.length == 6}
 # p [1,2,1,1,2].my_count {|x| x<2}
-
-# p /a/.class == Regexp
+# p (5..10).inject { |sum, n|
+#   sum + n
+# }
+# p (5..10).to_a.my_inject(1) { |product, n| product * n }
+# longest = %w{ cat sheep bear }.my_inject { |memo, word| memo.length > word.length ? memo : word }
+# p longest
+# p (5..10).to_a.my_inject(:+)
+# p (5..10).to_a.my_inject { |sum, n| sum + n }
+# p (5..10).to_a.my_inject(1, :*)
+# p (5..10).to_a.my_inject(1) { |product, n| product * n }
+# longest = %w{ cat sheep bear }.my_inject do |memo, word|
+#   memo.length > word.length ? memo : word
+# end
+# p longest
+# p multiply_els([1,2,3,4,5])
