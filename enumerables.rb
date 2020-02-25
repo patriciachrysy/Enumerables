@@ -34,8 +34,8 @@ module Enumerable
   # Disable rubocop to avoid high-complexity alerts on helper method
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all_any_none_helper(sub_param, value)
-    if sub_param.nil? # when main_param is not given.
-      return true if value # eg. [].my_all? == true (true when enumerator doesn't contain false/nil)
+    if sub_param.nil? && !block_given? # when main_param & block is not given.
+      return true if value # true if element is true
     elsif sub_param.class == Regexp # when a Regex is passed as an argument
       return true if sub_param.match(value)
     elsif sub_param.is_a?(Class) # when a class is passed as an argument
@@ -43,7 +43,7 @@ module Enumerable
     elsif sub_param == value # Check patterns other than Class/Regexp
       return true
     end
-    return true if yield value == true
+    return true if yield(value) # value == each element here
 
     false
   end
@@ -159,9 +159,10 @@ end
 # p [1,2,3,4,5].my_each
 # [1,2,3,4,5].my_each_with_index{|a,b| puts"#{a} with index #{b}"}
 # p [1,2,3,4,5].my_select
-# p [1,2,3,4,5].my_all? {|n| n<10}
-# p [1,2,3,4,5].my_any? {|n| n<0}
-# [1,2,3,4,5].my_none? {|n| n<2}
+# p [1, 2, 3, 4, 5].my_all? { |n| n < 10 }
+# p [1, 2, 3, 4, 5].my_any? { |n| n < 1 }
+# p [1,2,3,4,5].any?
+# p [1,2,3,4,5].my_none? {|n| n<2}
 # p [1, 2, 3, 4, 5].my_count { |n| n < 3 }
 # p [1, 2, 3, 4, 5].my_map { |n| n**2 }
 # p [1, 2, 3, 4, 5].my_inject(1) { |a, b| a * b }
