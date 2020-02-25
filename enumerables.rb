@@ -39,7 +39,7 @@ module Enumerable
     elsif sub_param.class == Regexp # when a Regex is passed as an argument
       return true if sub_param.match(value)
     elsif sub_param.is_a?(Class) # when a class is passed as an argument
-      return true if value.class == sub_param
+      return value.class == sub_param
     elsif sub_param == value # Check patterns other than Class/Regexp
       return true
     end
@@ -169,7 +169,7 @@ end
 # p [1, 2, 3, 4, 5].my_map(&:to_s)
 # p [1, 2, 3, 4, 5].my_map { |n| n.to_s }
 # p [1,2,3,4,5].my_map
-# p [1, 2, 3, 4, 5].my_all?(Integer)
+p [1, 2, 3, 4, '5'].my_all?(Integer)
 # p %w[asdf asdf afgag asdfq asgasg].none? {|i| i.length == 6}
 # p [1,2,1,1,2].my_count {|x| x<2}
 # p (5..10).inject { |sum, n|
