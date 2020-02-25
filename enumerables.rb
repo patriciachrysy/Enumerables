@@ -31,7 +31,7 @@ module Enumerable
 
   # 4. Create my_all?
   # Refactored my_all? & my_any? Helper method, to check Regex/Class/parameter passed in.
-  # Disable rubocop to avoid high-complexity alerts on helper methods
+  # Disable rubocop to avoid high-complexity alerts on helper method
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all_any_none_helper(sub_param, value)
     if sub_param.nil? # when main_param is not given.
@@ -50,7 +50,6 @@ module Enumerable
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
   # Refactoring my_all?, enlightened by mentor Rory Heiller
-
   def my_all?(main_param = nil)
     result = true
     my_each do |element| # iterate over self
@@ -117,7 +116,7 @@ module Enumerable
       end
     elsif !sym.nil? # if Symbol is given as 2nd parameter
       result = initial
-      my_each { |element| result = result.send(sym, element) } # .send involve method by Symbol
+      my_each { |element| result = result.send(sym, element) } # .send invoke method by Symbol
     elsif !initial.nil? # if initial is given only as a symbol
       result = self[0]
       self[1..-1].my_each { |element| result = result.send(initial, element) }
@@ -149,15 +148,13 @@ end
 def multiply_els(array)
   array.my_inject(:*)
 end
-# p multiply_els([1,2,3,4,5])
 
-#
 # TESTING -------------------------------
 #
 # prepend the module to Array to test.
-class Array
-  prepend Enumerable
-end
+# class Array
+#   prepend Enumerable
+# end
 #
 # p [1,2,3,4,5].my_each
 # [1,2,3,4,5].my_each_with_index{|a,b| puts"#{a} with index #{b}"}
