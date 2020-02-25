@@ -79,7 +79,7 @@ module Enumerable
       result ||= condition
       break if result == true # once got a true, exit the loop
     end
-    !result
+    !result # inverse of my_any?
   end
 
   # 7. Create my_count
@@ -107,11 +107,11 @@ module Enumerable
   # 9. Create my_inject
   def my_inject(initial = nil, sym = nil)
     if block_given?
-      if !initial.nil? # if initial is given
+      if !initial.nil? # Check if arguments are passed in
         result = initial
         my_each { |element| result = yield(result, element) }
-      else # if block and param are not given
-        result = self[0] # Result = first element
+      else
+        result = self[0] # Result = first element if no argument
         self[1..-1].my_each { |element| result = yield(result, element) }
       end
     elsif !sym.nil? # if Symbol is given as 2nd parameter
