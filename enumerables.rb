@@ -84,11 +84,15 @@ module Enumerable
   end
 
   # 7. Create my_count
-  def my_count
+  def my_count(param=nil)
     counter = 0
-    each do |i|
-      condition = yield(i)
-      counter += 1 if condition
+    if param == nil && !block_given?
+      return self.length
+    else
+      self.my_each do |i|
+        condition = yield(i) if block_given?
+        counter += 1 if condition || param == i
+      end
     end
     counter
   end
@@ -169,9 +173,10 @@ end
 # p [1,2,3,4,5].my_map
 # p [1, 2, 3, 4, 5].my_all?(Integer)
 # p [1, 2, 3, 4, 5].my_all?(Integer)
-p %w[asdf asdf afgag asdfq asgasg].none? {|i| i.length == 7}
+# p %w[asdf asdf afgag asdfq asgasg].none? {|i| i.length == 7}
 # p [].class === Integer
 # p 'asdf'.match?('b')
 # p /123/.class
+# p [1,2,1,1,2].my_count {|x| x<2}
 
 # p /a/.class == Regexp
