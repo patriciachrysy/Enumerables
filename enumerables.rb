@@ -30,40 +30,34 @@ module Enumerable
   end
 
   # 4. Create my_all?
-  # helper method to check regex
-  def check_my_all_regex(param)
-    reg_array = []
-    my_each { |i| reg_array << i.match?(param) }
-    reg_array.include?(false) ? false : true
-  end
-
-  # helper method to check class
-  def check_my_all_class(param)
-    class_array = []
-    my_each { |i| class_array.append(i.class == param) }
-    class_array.include?(false) ? false : true
-  end
-
-  def my_all?(param = nil)
-    arr_array = []
-    # return check_my_all_regex(param) if param.class == Regexp
-
-    return check_my_all_regex(param) if param.class == Regexp
-
-    # return check_my_all_class(param) unless param.nil?
-    return check_my_all_class(param) unless param.nil?
-
-    # check yield and append it into an array
-    my_each do |i|
-      condition = yield(i) if block_given?
-      arr_array << (condition ? true : false)
+  # Refactored my_all? Helper method, enlightened by mentor Rory Heiller
+  # Disable rubocop to avoid high-complexity alerts on helper methods
+  # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+  def my_all_helper(sub_param, value)
+    if sub_param.nil? # when main_param is not given.
+      return true if value # eg. [].my_all? == true (true when enumerator doesn't contain false/nil)
+    elsif sub_param.class == Regexp # when a Regex is passed as an argument
+      return true if sub_param.match(value)
+    elsif sub_param.is_a?(Class) # when a class is passed as an argument
+      return true if value.class == sub_param
+    elsif sub_param == value # Check patterns other than Class/Regexp
+      return true
     end
-    # return
-    if block_given?
-      arr_array.include?(false) ? false : true
-    else
-      false
+    return true if yield value == true
+
+    false
+  end
+  # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
+
+  # # Refactoring my_all?, enlightened by mentor Rory Heiller
+
+  def my_all?(main_param = nil)
+    result = true
+    my_each do |element| # iterate over self
+      result &&= my_all_helper(main_param, element) { |i| block_given? ? (yield i) : i } # i equals each element here
+      break if result == false # once find a false, exit the loop
     end
+    result
   end
 
   # 5. Create my_any?
@@ -176,7 +170,7 @@ end
 # p [1,2,3,4,5].my_map
 # p [1, 2, 3, 4, 5].my_all?(Integer)
 # p [1, 2, 3, 4, 5].my_all?(Integer)
-p %w[asdf asdf afgag asdfq asgas].my_all?(/a/)
+p %w[asdf asdf afgag asdfq asgas].my_all?(Integer)
 # p [].class === Integer
 # p 'asdf'.match?('b')
 # p /123/.class
