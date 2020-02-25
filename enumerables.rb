@@ -145,9 +145,9 @@ module Enumerable
 end
 
 # 10. Test my_inject with multiply_els method
-# def multiply_els(array)
-#   array.my_inject(:*)
-# end
+def multiply_els(array)
+  array.my_inject(:*)
+end
 
 # TESTING -------------------------------
 #
