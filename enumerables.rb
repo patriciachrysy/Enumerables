@@ -44,7 +44,6 @@ module Enumerable
     return sub_param == value unless sub_param.nil?
 
     yield(value) ? true : false
-    # Check patterns other than Class/Regexp
   end
   # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
@@ -159,7 +158,7 @@ end
 # [1,2,3,4,5].my_each_with_index{|a,b| puts"#{a} with index #{b}"}
 # p [1,2,3,4,5].my_select
 # p [1, 2, 3, 4, 5].my_all? { |n| n < 6 }
-# p [1, 1, 1, 1, 1].my_all?(1)
+# p [2].my_all?(1)
 # p [1, 2, 3, 4, 5].my_any? { |n| n < 1 }
 # p [1,2,3,4,5].any?
 # p [1,2,3,4,5].my_none? {|n| n<2}
