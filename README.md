@@ -4,6 +4,10 @@
 
 This project is also the second project of Microverse Software Development Program - Ruby Section. Branches that merged into the master branch are verified and approved by Microverse's Technical Support Engineers.
 
+This project is achieved under the following restrictions under Rubocop:
+- Module must below 100 lines.
+- Each Methods must below 20 lines.
+
 ## Built With
 
 - Ruby
