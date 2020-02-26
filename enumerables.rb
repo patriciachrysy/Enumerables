@@ -37,13 +37,9 @@ module Enumerable
   # Disable rubocop to avoid high-complexity alerts on helper method
   # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
   def my_all_any_none_helper(sub_param, value)
-    # when main_param & block is not given.
-    return value ? true : false if sub_param.nil? && !block_given? # true if element is true
-    # when a Regex is passed as an argument
+    return value ? true : false if sub_param.nil? && !block_given?
     return sub_param.match?(value) if sub_param.class == Regexp
-    # when a class is passed as an argument
     return value.class == sub_param if sub_param.is_a?(Class)
-    # when sub_param is given
     return sub_param == value unless sub_param.nil?
 
     yield(value) ? true : false
@@ -53,10 +49,10 @@ module Enumerable
   # Refactoring my_all?, enlightened by mentor Rory Heiller
   def my_all?(main_param = nil)
     result = true
-    my_each do |element| # iterate over self
+    my_each do |element|
       condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i }
-      result &&= condition # i equals each element here
-      break if result == false # once find a false, exit the loop
+      result &&= condition
+      break if result == false
     end
     result
   end
@@ -64,10 +60,10 @@ module Enumerable
   # 5. Create my_any?
   def my_any?(main_param = nil)
     result = false
-    my_each do |element| # iterate over self
+    my_each do |element|
       condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i }
       result ||= condition
-      break if result == true # once got a true, exit the loop
+      break if result == true
     end
     result
   end
@@ -75,10 +71,10 @@ module Enumerable
   # 6. Create my_none?
   def my_none?(main_param = nil)
     result = false
-    my_each do |element| # iterate over self
+    my_each do |element|
       condition = my_all_any_none_helper(main_param, element) { |i| block_given? ? yield(i) : i }
       result ||= condition
-      break if result == true # once got a true, exit the loop
+      break if result == true
     end
     !result # inverse of my_any?
   end
@@ -98,11 +94,11 @@ module Enumerable
   # 9. Create my_inject
   def my_inject(initial = nil, sym = nil)
     if block_given?
-      if !initial.nil? # Check if arguments are passed in
+      if !initial.nil?
         result = initial
         my_each { |element| result = yield(result, element) }
       else
-        result = first # Result = first element if no argument
+        result = first
         to_a[1..-1].my_each { |element| result = yield(result, element) }
       end
     elsif !sym.nil? # if Symbol is given as 2nd parameter
