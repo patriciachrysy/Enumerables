@@ -1,12 +1,15 @@
 module Enumerable
   # 1. Create my_each
   def my_each
-    i = 0
-    while i < length
-      yield self[i] if block_given?
-      i += 1
+    if block_given?
+      i = 0
+      while i < size
+        yield to_a[i] if block_given?
+        i += 1
+      end
+    else
+      to_enum(:my_each)
     end
-    self unless block_given?
   end
 
   # 2. Create my_each_with_index
@@ -16,7 +19,7 @@ module Enumerable
       yield(self[i], i) if block_given?
       i += 1
     end
-    self unless block_given?
+    return to_enum(:my_each_with_index) unless block_given?
   end
 
   # 3. Create my_select
@@ -26,7 +29,7 @@ module Enumerable
       criteria = yield(self[i]) if block_given?
       arr << self[i] if criteria
     end
-    block_given? ? arr : self
+    block_given? ? arr : to_enum(:my_select)
   end
 
   # 4. Create my_all?
@@ -109,15 +112,15 @@ module Enumerable
         result = initial
         my_each { |element| result = yield(result, element) }
       else
-        result = self[0] # Result = first element if no argument
-        self[1..-1].my_each { |element| result = yield(result, element) }
+        result = first # Result = first element if no argument
+        to_a[1..-1].my_each { |element| result = yield(result, element) }
       end
     elsif !sym.nil? # if Symbol is given as 2nd parameter
       result = initial
       my_each { |element| result = result.send(sym, element) } # .send invoke method by Symbol
     elsif !initial.nil? # if initial is given only as a symbol
-      result = self[0]
-      self[1..-1].my_each { |element| result = result.send(initial, element) }
+      result = first
+      to_a[1..-1].my_each { |element| result = result.send(initial, element) }
     end
     result
   end
@@ -134,9 +137,11 @@ module Enumerable
 
   # 12. my_map with proc/block
   def my_map(&my_proc)
-    return self unless my_proc || block_given?
+    return to_enum(:my_map) unless my_proc || block_given?
 
     arr = []
+    return to_enum(my_map) unless block_given?
+
     my_proc ? each { |i| arr << my_proc.call(i) } : each { |i| arr << yield(i) if block_given? }
     arr
   end
@@ -150,13 +155,19 @@ end
 # TESTING -------------------------------
 #
 # prepend the module to Array to test.
-# class Array
-#   prepend Enumerable
-# end
+class Array
+  prepend Enumerable
+end
+
+class Range
+  prepend Enumerable
+end
 #
+# p [1,2,3,4,5].each_with_index
 # p [1,2,3,4,5].my_each
+# p [1,2,3,4,5].my_map
 # [1,2,3,4,5].my_each_with_index{|a,b| puts"#{a} with index #{b}"}
-# p [1,2,3,4,5].my_select
+# p [1,2,3,4,5].my_select #error?
 # p [1, 2, 3, 4, 5].my_all? { |n| n < 6 }
 # p [2].my_all?(1)
 # p [1, 2, 3, 4, 5].my_any? { |n| n < 1 }
@@ -167,16 +178,17 @@ end
 # p [1, 2, 3, 4, 5].my_inject(1) { |a, b| a * b }
 # p [1, 2, 3, 4, 5].my_map(&:to_s)
 # p [1, 2, 3, 4, 5].my_map { |n| n.to_s }
-# p [1,2,3,4,5].my_map
+# p [1,2,3,4,5].my_map == [1,2,3,4,5].map #false?
 # p [1, 2, 3, 4, '5'].my_any?(Integer)
 # p %w[asdf asdf afgag asdfq asgasg].my_all?("a")
 # p [1,2,1,1,2].my_count {|x| x<2}
-# p (5..10).inject { |sum, n|
-#   sum + n
-# }
+# p [1,2,3,4,5].to_a
+# p (5..10).my_inject(1) { |product, n| product * n }
+# p (5..10).my_inject { |sum, n| sum + n } == (5..10).inject { |sum, n| sum + n }
 # p (5..10).to_a.my_inject(1) { |product, n| product * n }
 # longest = %w{ cat sheep bear }.my_inject { |memo, word| memo.length > word.length ? memo : word }
 # p longest
+# p (1..5).to_a[1..-1]
 # p (5..10).to_a.my_inject(:+)
 # p (5..10).to_a.my_inject { |sum, n| sum + n }
 # p (5..10).to_a.my_inject(1, :*)
