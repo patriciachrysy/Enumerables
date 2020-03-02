@@ -39,7 +39,7 @@ module Enumerable
   def my_all_any_none_helper(sub_param, value)
     return value ? true : false if sub_param.nil? && !block_given?
     return sub_param.match?(value) if sub_param.class == Regexp
-    return value.class == sub_param if sub_param.is_a?(Class)
+    return value.class <= sub_param if sub_param.is_a?(Class)
     return sub_param == value unless sub_param.nil?
 
     yield(value) ? true : false
@@ -116,8 +116,6 @@ module Enumerable
     return to_enum(:my_map) unless my_proc || block_given?
 
     arr = []
-    return to_enum(my_map) unless block_given?
-
     my_proc ? each { |i| arr << my_proc.call(i) } : each { |i| arr << yield(i) if block_given? }
     arr
   end
