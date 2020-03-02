@@ -5,8 +5,8 @@
 This project is also the second project of Microverse Software Development Program - Ruby Section. Branches that merged into the master branch are verified and approved by Microverse's Technical Support Engineers.
 
 This project is achieved under the following restrictions:
-- Module must below 100 lines.
-- Each Methods must below 20 lines.
+- Module must below 100 lines(except comments).
+- Each methods must below 20 lines.
 - `yield` must be used
 - `my_each`, `my_each_with_index`, `my_select`, `my_map` return the Enumerator when no argument/block is given
 - `my_all?`, `my_any?`, `my_none?` can check for Class/Regex/Other parameter
